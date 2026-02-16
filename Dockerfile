@@ -2,6 +2,7 @@ FROM ros:jazzy-ros-base
 SHELL [ "/bin/bash", "-c" ]
 
 RUN apt-get update && apt-get install -y \
+    udev \
     nano \
     curl \
     lsb-release \
@@ -45,4 +46,14 @@ RUN /bin/bash -c " source /opt/ros/jazzy/setup.bash \
     && source ~/.bashrc \
     && echo 'export LDS_MODEL=LDS-01' >> ~/.bashrc \
     && source ~/.bashrc
+
+# Copy the entrypoint script into the image
+COPY udev_entrypoint.sh /udev_entrypoint.sh
+RUN chmod +x /udev_entrypoint.sh
+
+# Set the script as the entrypoint
+ENTRYPOINT ["/udev_entrypoint.sh"]
+
+# Default command: run bash to keep the container open
+CMD ["bash"]
 
